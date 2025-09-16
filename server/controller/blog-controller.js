@@ -24,30 +24,32 @@ const fetchListOfBlogs = async (req, res) => {
 }
 
 const addNewBlog = async (req, res) => {
-  const { title, description } = req.body
-  const currentDate = new Date()
+  console.log("addNewBlog called");              // debug log
+  console.log("Request body:", req.body);        // log what frontend sent
 
+  const { title, description } = req.body;
+  const currentDate = new Date();
+
+  // Create a new blog instance
   const newlyCreatedBlog = new Blog({
-    title, description, date: currentDate
-  })
+    title,
+    description,
+    date: currentDate
+  });
 
   try {
-    await newlyCreatedBlog.save()
-  } catch (e) {
-    console.log(e)
-  }
+    // Save blog to database
+    const savedBlog = await newlyCreatedBlog.save();
+    console.log("Blog saved successfully:", savedBlog);  // debug log
 
-  try {
-    const session = await mongoose.startSession()
-    session.startTransaction()
-    await newlyCreatedBlog.save(session)
-    session.commitTransaction()
-  } catch (e) {
-    return res.send(500).json({ message: e })
+    // Return success response
+    return res.status(200).json(savedBlog);
+  } catch (err) {
+    console.error("Error saving blog:", err);     // detailed error
+    return res.status(500).json({ message: err.message });
   }
+};
 
-  return res.status(200).json(newlyCreatedBlog)
-}
 
 const deleteBlog = async(req, res) => {
   const id = req.params.id
