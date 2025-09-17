@@ -9,6 +9,7 @@ export default function GlobalState({children}) {
 
   const [blogList, setBlogList] = useState([])
   const [pending, setPending] = useState(false)
+  const [isEdit, setIsEdit] = useState(false)
 
 
 
@@ -20,7 +21,9 @@ export default function GlobalState({children}) {
         blogList,
         setBlogList,
         pending,
-        setPending
+        setPending,
+        isEdit,
+        setIsEdit
       }}
     >
       {children}

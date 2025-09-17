@@ -1,29 +1,40 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import classes from './style.module.css'
 import { GlobalContext } from '../../context/GlobalContext'
 import api from "../../api.js"
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
+
 
 
 export default function AddNewBlog() {
 
-  const {formData, setFormData} = useContext(GlobalContext)
+  const {formData, setFormData, isEdit, setIsEdit} = useContext(GlobalContext)
   const navigate = useNavigate()
+  const location = useLocation()
 
   console.log(formData, "Form Data")
 
   async function handleSaveBlog() {
     try{
-      const response = await api.post("/api/blogs/add", {
-        title: formData.title,
-        description: formData.description,
+      const response = isEdit
+        ? await api.put(`/api/blogs/update/${location.state.getCurrentItem._id}`, {
+          title: formData.title,
+          description: formData.description,
+        })
+
+        : await api.post("/api/blogs/add", {
+          title: formData.title,
+          description: formData.description,
       });
+
+      console.log("Editing blog ID:", location.state?.getCurrentItem?._id)
 
       const result = await response.data
 
-      console.log(result)
+      console.log(result, "result")
 
       if(result) {
+        setIsEdit(false)
         setFormData({
           title: '',
           description: ''
@@ -35,9 +46,21 @@ export default function AddNewBlog() {
     }
   }
 
+  useEffect(() => {
+    console.log(location)
+    if(location.state) {
+      const { getCurrentItem } = location.state
+      setIsEdit(true)
+      setFormData({
+        title: getCurrentItem.title,
+        description: getCurrentItem.description
+      })
+    }
+  }, [location])
+
   return (
     <div className={classes.wrapper}>
-      <h1>Add a Blog</h1>
+      <h1>{isEdit ? "Edit blog" : "Add a Blog"}</h1>
       <div className={classes.formWrapper}>
         <input
           type="text"
@@ -62,7 +85,7 @@ export default function AddNewBlog() {
 
         >
         </textarea>
-        <button onClick={handleSaveBlog}>Add new Blog</button>
+        <button onClick={handleSaveBlog}>{isEdit ? "Edit blog" : "Add a Blog"}</button>
       </div>
     </div>
   )

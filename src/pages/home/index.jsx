@@ -3,10 +3,13 @@ import {GlobalContext} from "../../context/GlobalContext"
 import api from "../../api.js"
 import classes from './style.module.css'
 import {FaTrash, FaEdit} from 'react-icons/fa'
+import { useNavigate } from "react-router-dom"
+
 
 export default function Home() {
 
   const {blogList, setBlogList, pending, setPending} = useContext(GlobalContext)
+  const navigate = useNavigate()
 
   async function fetchListOfBlogs() {
     setPending(true)
@@ -32,6 +35,10 @@ export default function Home() {
     }
   }
 
+  function handleEdit(getCurrentItem) {
+    navigate('/add-blog', { state: { getCurrentItem}})
+  }
+
   useEffect(() => {
     fetchListOfBlogs()
   }, [])
@@ -48,7 +55,7 @@ export default function Home() {
                 <div key={blogItem._id}>
                   <p>{blogItem.title}</p>
                   <p>{blogItem.description}</p>
-                  <FaEdit size={30}/>
+                  <FaEdit onClick={() => handleEdit(blogItem)} size={30}/>
                   <FaTrash onClick={() => handleDeleteBlog(blogItem._id)} size={30}/>
                 </div>
               )) : <h3>No blogs added</h3>

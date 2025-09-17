@@ -42,7 +42,7 @@ const addNewBlog = async (req, res) => {
 
     return res.status(200).json(savedBlog);
   } catch (err) {
-    console.error("Error saving blog:", err); 
+    console.error("Error saving blog:", err);
     return res.status(500).json({ message: err.message });
   }
 };
@@ -62,23 +62,29 @@ const deleteBlog = async(req, res) => {
   }
 }
 
-const updateBlog = async(req, res) => {
-  const id = req.params.id
-  const {title, description} = req.body
-
-  let currentBlogToUpdate
+const updateBlog = async (req, res) => {
+  const id = req.params.id;
+  const { title, description } = req.body;
 
   try {
-    currentBlogToUpdate = await Blog.findByIdAndUpdate(id, {title, description})
-  } catch (error) {
-    console.log(error)
-    return res.status(500).json({message: "Something went wrong while updating"})
-  }
+    // Update the blog and return the updated document
+    const updatedBlog = await Blog.findByIdAndUpdate(
+      id,
+      { title, description },
+      { new: true } // <- ensures the returned document is the updated one
+    );
 
-  if(!currentBlogToUpdate){
-    return res.status(500).json({ message: 'Unable to update'})
+    if (!updatedBlog) {
+      return res.status(404).json({ message: "Blog not found" });
+    }
+
+    // ✅ Return a response so Axios resolves
+    return res.status(200).json(updatedBlog);
+  } catch (error) {
+    console.error("Error updating blog:", error);
+    return res.status(500).json({ message: "Something went wrong while updating" });
   }
-}
+};
 
 
 module.exports = {fetchListOfBlogs, deleteBlog, updateBlog, addNewBlog}
