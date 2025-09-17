@@ -24,13 +24,12 @@ const fetchListOfBlogs = async (req, res) => {
 }
 
 const addNewBlog = async (req, res) => {
-  console.log("addNewBlog called");              // debug log
-  console.log("Request body:", req.body);        // log what frontend sent
+  console.log("addNewBlog called");
+  console.log("Request body:", req.body);
 
   const { title, description } = req.body;
   const currentDate = new Date();
 
-  // Create a new blog instance
   const newlyCreatedBlog = new Blog({
     title,
     description,
@@ -38,14 +37,12 @@ const addNewBlog = async (req, res) => {
   });
 
   try {
-    // Save blog to database
     const savedBlog = await newlyCreatedBlog.save();
-    console.log("Blog saved successfully:", savedBlog);  // debug log
+    console.log("Blog saved successfully:", savedBlog);
 
-    // Return success response
     return res.status(200).json(savedBlog);
   } catch (err) {
-    console.error("Error saving blog:", err);     // detailed error
+    console.error("Error saving blog:", err); 
     return res.status(500).json({ message: err.message });
   }
 };

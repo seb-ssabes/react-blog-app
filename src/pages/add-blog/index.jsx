@@ -2,11 +2,13 @@ import { useContext } from 'react'
 import classes from './style.module.css'
 import { GlobalContext } from '../../context/GlobalContext'
 import api from "../../api.js"
+import { useNavigate } from 'react-router-dom'
 
 
 export default function AddNewBlog() {
 
   const {formData, setFormData} = useContext(GlobalContext)
+  const navigate = useNavigate()
 
   console.log(formData, "Form Data")
 
@@ -20,6 +22,14 @@ export default function AddNewBlog() {
       const result = await response.data
 
       console.log(result)
+
+      if(result) {
+        setFormData({
+          title: '',
+          description: ''
+        })
+        navigate('/')
+      }
     }catch(e){
       console.log(e, 'add blog error')
     }
