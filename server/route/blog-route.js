@@ -2,8 +2,6 @@ const express = require('express')
 
 const blogRouter = express.Router()
 
-
-
 const {fetchListOfBlogs, deleteBlog, addNewBlog, updateBlog} = require('../controller/blog-controller')
 
 blogRouter.get('/', fetchListOfBlogs)

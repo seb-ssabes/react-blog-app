@@ -1,24 +1,28 @@
 import { useContext } from 'react'
 import classes from './style.module.css'
 import { GlobalContext } from '../../context/GlobalContext'
-import axios from 'axios'
+import api from "../../api.js"
 
 
 export default function AddNewBlog() {
 
   const {formData, setFormData} = useContext(GlobalContext)
 
-  console.log(formData)
+  console.log(formData, "Form Data")
 
   async function handleSaveBlog() {
-    const response = await axios.post("/api/blogs/add", {
-      title: formData.title,
-      description: formData.description
-    });
+    try{
+      const response = await api.post("/api/blogs/add", {
+        title: formData.title,
+        description: formData.description,
+      });
 
-    const result = await response.data
+      const result = await response.data
 
-    console.log(result)
+      console.log(result)
+    }catch(e){
+      console.log(e, 'add blog error')
+    }
   }
 
   return (
